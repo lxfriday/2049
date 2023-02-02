@@ -1,0 +1,61 @@
+.wrapper {
+  background-color: #f7f8fd;
+  grid-area: menu;
+  --active-color: #5053f0;
+  --base-color: #7d7a8e;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+  .feedback {
+    cursor: pointer;
+    font-size: 12px;
+    color: #9e9e9e;
+    text-decoration: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 30px;
+    text-align: center;
+  }
+}
+.feedbackToolTip {
+  :global {
+    .ant-tooltip-arrow {
+      display: none;
+    }
+    .ant-tooltip-inner {
+      padding: 0;
+      border-radius: 0;
+      background-color: transparent;
+      box-shadow: none;
+    }
+  }
+  .feedbackImg {
+    width: 278px;
+    height: 136px;
+  }
+}
+
+.itemWrapper {
+  height: 32px;
+  margin: 5px 0 0 16px;
+  padding: 0 9px 0 15px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--base-color);
+  cursor: pointer;
+  &.active {
+    background-color: var(--active-color);
+    color: #fff;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+  .prefixWrapper {
+    width: 20px;
+    height: 20px;
+  }
+  .title {
+    margin-left: 6px;
+  }
+}

@@ -1,0 +1,14 @@
+.wrapper {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 155px 1fr;
+  grid-template-rows: 60px 1fr;
+  grid-template-areas:
+    'nav nav'
+    'menu content';
+}
+.content {
+  background-color: #fff;
+  grid-area: content;
+}
