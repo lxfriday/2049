@@ -6,11 +6,12 @@ export interface IItem {
   pic: string
   name: string
   createdAt: string
+  onClick?(): void
 }
 
-export default function ListItem({ id, pic, name, createdAt }: IItem) {
+export default function ListItem({ id, pic, name, createdAt, onClick }: IItem) {
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} onClick={onClick}>
       <div className={styles.imgWrapper}>
         <img src={pic} alt="" />
       </div>

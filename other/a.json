@@ -1,0 +1,30 @@
+[
+  "_COPY_2049",
+  [
+    {
+      "x": 1,
+      "y": 1,
+      "id": "g-0a3600a1-b3bf-4094-aa54-65d6f5905631",
+      "link": null,
+      "mode": "text",
+      "text": "   ",
+      "type": "note",
+      "color": "#FFF7B7",
+      "group": null,
+      "media": [],
+      "width": 320,
+      "height": 97,
+      "isBold": false,
+      "isSign": true,
+      "isSilen": false,
+      "version": 2,
+      "isDelete": false,
+      "textSize": "35",
+      "textColor": "#666666",
+      "createdType": "copy",
+      "zIndex": 71,
+      "scale": 1.5673682219760627,
+      "shape": "horizontal"
+    }
+  ]
+]

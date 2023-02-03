@@ -52,7 +52,7 @@ const items: MenuProps['items'] = [
     key: '4',
     label: (
       <span>
-        <MyIcons type="icon-logout" style={{ fontSize: 20 }} />
+        <MyIcons type="icon-logout" style={{ fontSize: 18 }} />
         <span>退出登录</span>
       </span>
     ),
@@ -64,7 +64,7 @@ export default function Workspace() {
     <div className={styles.wrapper}>
       <div className={styles.logoAndName}>
         <img src="/logo.svg" className={styles.logo} alt="logo" />
-        <span className={styles.siteName}>2049协同白板</span>
+        <span className={styles.siteName}>2049协同白板(DEV)</span>
       </div>
       <div className={styles.navTools}>
         <Button danger className={styles.navButton}>
