@@ -60,6 +60,7 @@ specifiers:
   resolve-url-loader: ^4.0.0
   sass-loader: ^12.3.0
   semver: ^7.3.5
+  smooth-scrollbar: ^8.8.1
   source-map-loader: ^3.0.0
   style-loader: ^3.3.1
   tailwindcss: ^3.0.2
@@ -83,6 +84,7 @@ dependencies:
   react-redux: 8.0.5_fxtgt6bjwd6p4cwoordejim2zi
   react-router-dom: 6.8.0_biqbaboplfbrettd7655fr4n2y
   redux-logger: 3.0.6
+  smooth-scrollbar: 8.8.1
   use-immer: 0.8.1_react@18.2.0
 
 devDependencies:
@@ -4031,7 +4033,6 @@ packages:
   /core-js/3.27.2:
     resolution: {integrity: sha512-9ashVQskuh5AZEZ1JdQWp1GqSoC1e1G87MzRqg2gIfVAQ7Qn9K+uFj8EcniUFA4P2NLZfV+TOlX1SzoKfo+s7w==}
     requiresBuild: true
-    dev: true
 
   /core-util-is/1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -7081,9 +7082,12 @@ packages:
       p-locate: 5.0.0
     dev: true
 
+  /lodash.clamp/4.0.3:
+    resolution: {integrity: sha512-HvzRFWjtcguTW7yd8NJBshuNaCa8aqNFtnswdT7f/cMd/1YKy5Zzoq4W/Oxvnx9l7aeY258uSdDfM793+eLsVg==}
+    dev: false
+
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
-    dev: true
 
   /lodash.memoize/4.1.2:
     resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
@@ -9835,6 +9839,15 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
+  /smooth-scrollbar/8.8.1:
+    resolution: {integrity: sha512-FQDRtdLTRye8LdRHohNAxh0hyo7gl8+APfA+8Qu5S38MBqR8/WqOoRVzjizH6FTdbU1qGsB7gs8LhMeFJ4Jr8g==}
+    dependencies:
+      core-js: 3.27.2
+      lodash.clamp: 4.0.3
+      lodash.debounce: 4.0.8
+      tslib: 1.14.1
+    dev: false
+
   /sockjs/0.3.24:
     resolution: {integrity: sha512-GJgLTZ7vYb/JtPSSZ10hsOYIvEYsjbNU+zPdIHcUaWVNUEPivzxku31865sSSud0Da0W4lEeOPlmw93zLQchuQ==}
     dependencies:
@@ -10377,7 +10390,6 @@ packages:
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-    dev: true
 
   /tslib/2.5.0:
     resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}

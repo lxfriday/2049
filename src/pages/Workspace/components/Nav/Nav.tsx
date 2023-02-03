@@ -3,7 +3,7 @@ import { Button } from 'antd'
 import { ToTopOutlined, CaretDownOutlined } from '@ant-design/icons'
 import MyIcons from '@icons/MyIcons'
 import DropDown from '@components/DropDown'
-import styles from './index.module.less'
+import styles from './Nav.module.less'
 
 import type { MenuProps } from 'antd'
 

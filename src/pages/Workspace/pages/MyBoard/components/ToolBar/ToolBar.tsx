@@ -7,7 +7,7 @@ import {
   CheckOutlined,
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
-import styles from './index.module.less'
+import styles from './ToolBar.module.less'
 
 export default function ToolBar() {
   const [selectedSource, setSelectedSource] = useState({
@@ -26,7 +26,7 @@ export default function ToolBar() {
           )}
         </span>
       ),
-      onClick() {
+      onClick(e) {
         setSelectedSource({ key: '1', label: '所有白板' })
       },
     },

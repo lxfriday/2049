@@ -4,7 +4,7 @@ import { Tooltip } from 'antd'
 import { ClusterOutlined, HomeOutlined } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-import styles from './index.module.less'
+import styles from './Menu.module.less'
 
 export default function Menu() {
   const navigateTo = useNavigate()
