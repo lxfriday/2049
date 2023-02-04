@@ -3,6 +3,7 @@
   width: 100%;
   height: calc(100% - 40px);
   overflow: hidden;
+  background-color: #f7f8fd;
   .canvas {
     position: absolute;
     left: 0;
@@ -10,10 +11,11 @@
     width: 5760px;
     height: 3140px;
     background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgZmlsbD0iI0Q2REJFQyIgY3g9IjEwMCIgY3k9IjEwMCIgcj0iMTAiPjwvY2lyY2xlPjwvZz48L3N2Zz4K);
+    background-color: transparent;
     transform: scale(1);
     box-shadow: 0 0 50px #ddd;
   }
-
+  cursor: default;
   &.cursorDefault {
     cursor: default;
   }

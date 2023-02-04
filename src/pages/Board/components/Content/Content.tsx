@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react'
+import React, { useEffect, useRef } from 'react'
 import classnames from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { ECursorType, updateCursorType } from '@models/board'
 import { debounce } from '@utils/index'
 import type { RootState } from '@models/index'
@@ -10,11 +10,16 @@ let isDraggingCanvas = false
 let dragSrcPos = { x: 0, y: 0 }
 let dragInitialCanvasPos = { x: 0, y: 0 }
 
-export default function Content() {
+interface IContentProps {
+  canvasHandleRef: React.MutableRefObject<{
+    updateCursor(t: ECursorType): void
+  } | null>
+}
+
+export default function Content({ canvasHandleRef }: IContentProps) {
   const { cursorType } = useSelector((rootState: RootState) => rootState.board)
   const { current: debouncedDragCanvas } = useRef(debounce(handleDragCanvas, 0))
   const canvasRef = useRef<HTMLDivElement>(null)
-
   const canDragCanvas = cursorType === ECursorType.palm
 
   // pointer palm 自动切换
@@ -24,8 +29,10 @@ export default function Content() {
     e.preventDefault()
     if (cursorType === ECursorType.pointer) {
       updateCursorType(ECursorType.palm)
+      if (canvasRef.current) canvasRef.current.style.cursor = `pointer`
     } else {
       updateCursorType(ECursorType.pointer)
+      if (canvasRef.current) canvasRef.current.style.cursor = `default`
     }
   }
 
@@ -42,32 +49,33 @@ export default function Content() {
     }
   }
 
-  const cursorClassName = useMemo(() => {
-    switch (cursorType) {
-      case ECursorType.xiexiangfa5: {
-        return styles.cursorxiexiangfa5
-      }
-      case ECursorType.xiexiangfa4: {
-        return styles.cursorxiexiangfa4
-      }
-      case ECursorType.xiexiangfa3: {
-        return styles.cursorxiexiangfa3
-      }
-      case ECursorType.xiexiangfa2: {
-        return styles.cursorxiexiangfa2
-      }
-      case ECursorType.xiexiangfa1: {
-        return styles.cursorxiexiangfa1
-      }
-      case ECursorType.palm: {
-        return styles.cursorPointer
-      }
-      case ECursorType.pointer:
-      default: {
-        return styles.cursorDefault
-      }
-    }
-  }, [cursorType])
+  // const cursorClassName = useMemo(() => {
+  //   switch (cursorType) {
+  //     case ECursorType.xiexiangfa5: {
+  //       return styles.cursorxiexiangfa5
+  //     }
+  //     case ECursorType.xiexiangfa4: {
+  //       return styles.cursorxiexiangfa4
+  //     }
+  //     case ECursorType.xiexiangfa3: {
+  //       return styles.cursorxiexiangfa3
+  //     }
+  //     case ECursorType.xiexiangfa2: {
+  //       return styles.cursorxiexiangfa2
+  //     }
+  //     case ECursorType.xiexiangfa1: {
+  //       return styles.cursorxiexiangfa1
+  //     }
+  //     case ECursorType.palm: {
+  //       return styles.cursorPointer
+  //     }
+  //     case ECursorType.pointer:
+  //     default: {
+  //       return styles.cursorDefault
+  //     }
+  //   }
+  // }, [cursorType])
+
   useEffect(() => {
     const ctrlCode = 'ControlLeft',
       shiftCode = 'ShiftLeft'
@@ -89,9 +97,48 @@ export default function Content() {
       document.removeEventListener('mouseup', onMouseUp)
     }
   }, [])
+  useEffect(() => {
+    canvasHandleRef.current = {
+      updateCursor(t: ECursorType) {
+        if (canvasRef.current) {
+          switch (t) {
+            case ECursorType.xiexiangfa5: {
+              canvasRef.current.style.cursor = `url(/controls-xiexiangfa-opt5.svg), default`
+              return
+            }
+            case ECursorType.xiexiangfa4: {
+              canvasRef.current.style.cursor = `url(/controls-xiexiangfa-opt4.svg), default`
+              return
+            }
+            case ECursorType.xiexiangfa3: {
+              canvasRef.current.style.cursor = `url(/controls-xiexiangfa-opt3.svg), default`
+              return
+            }
+            case ECursorType.xiexiangfa2: {
+              canvasRef.current.style.cursor = `url(/controls-xiexiangfa-opt2.svg), default`
+              return
+            }
+            case ECursorType.xiexiangfa1: {
+              canvasRef.current.style.cursor = `url(/controls-xiexiangfa-opt1.svg), default`
+              return
+            }
+            case ECursorType.palm: {
+              canvasRef.current.style.cursor = `pointer`
+              return
+            }
+            case ECursorType.pointer:
+            default: {
+              canvasRef.current.style.cursor = `default`
+              return
+            }
+          }
+        }
+      },
+    }
+  }, [])
   return (
     <div
-      className={classnames(styles.wrapper, cursorClassName)}
+      className={classnames(styles.wrapper)}
       onContextMenu={handleWwitchCursorType}>
       {/* 画布 */}
       <div
