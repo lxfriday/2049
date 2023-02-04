@@ -1,0 +1,82 @@
+.wrapper {
+  position: absolute;
+  top: calc(50% - 230px);
+  left: 15px;
+  height: 490px;
+  width: 56px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #ddd;
+  font-size: 10px;
+  color: #303030;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  --base-color: #303030;
+  --active-color: #5053fd;
+  background-color: #fff;
+  z-index: 999;
+  .box {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    &.active {
+      color: var(--active-color);
+    }
+    &.disabled {
+      opacity: 0.3;
+    }
+    &:hover {
+      background-color: #5053f01a;
+    }
+    svg {
+      margin-bottom: 4px;
+      width: 26px;
+      height: 26px;
+    }
+    span {
+      transform: scale(0.9);
+    }
+  }
+  .gap {
+    height: 1px;
+    margin: 5px 15px;
+    background-color: #303030;
+    opacity: 0.1;
+  }
+}
+
+.xieXiangfaMenuOverlay {
+  width: 250px;
+  .xieXaingfaMenuWrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .optBtn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+      cursor: pointer;
+      &:hover {
+        background-color: #5053f01a;
+      }
+    }
+  }
+
+  .optBtn {
+    color: #000;
+  }
+  :global(.ant-tooltip-inner) {
+    background-color: #fff;
+  }
+  :global(.ant-tooltip-arrow::before) {
+    background-color: #fff;
+  }
+}
