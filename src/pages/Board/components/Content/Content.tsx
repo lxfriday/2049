@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import classnames from 'classnames'
 import { useSelector } from 'react-redux'
 import { plus, minus } from 'number-precision'
-import { ECursorType, updateCursorType, updateCanvasScale } from '@models/board'
+import { ECursorType, updateCanvasScale } from '@models/board'
 import type { RootState } from '@models/index'
 import type { canvasHandleRefType } from '../../Board'
 import styles from './Content.module.less'
@@ -10,10 +10,11 @@ import styles from './Content.module.less'
 let isDraggingCanvas = false
 // 按下左键时鼠标的位置，按下就会记录
 let dragSrcPos = { x: 0, y: 0 }
-// 按下鼠标时，鼠标的位置，按下就会记录
-let dragInitialCanvasPos = { x: 0, y: 0 }
 // 画布的缩放比例
 let canvasScale = 1
+// 移动比例
+let prevCanvasTranslate = { x: 0, y: 0 }
+let canvasTranslate = { x: 0, y: 0 }
 
 interface IContentProps {
   canvasHandleRef: canvasHandleRefType
@@ -26,19 +27,19 @@ export default function Content({ canvasHandleRef }: IContentProps) {
   // 能否拖动画布
   const canDragCanvas = cursorType === ECursorType.palm
 
-  // pointer palm 自动切换
-  function handleWwitchCursorType(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  ) {
-    e.preventDefault()
-    if (cursorType === ECursorType.pointer) {
-      updateCursorType(ECursorType.palm)
-      if (canvasRef.current) canvasRef.current.style.cursor = `pointer`
-    } else {
-      updateCursorType(ECursorType.pointer)
-      if (canvasRef.current) canvasRef.current.style.cursor = `default`
-    }
-  }
+  // 单击 pointer palm 自动切换
+  // function handleContextButtonSwitchCursorType(
+  //   e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  // ) {
+  //   e.preventDefault()
+  //   if (cursorType === ECursorType.pointer) {
+  //     updateCursorType(ECursorType.palm)
+  //     if (canvasRef.current) canvasRef.current.style.cursor = `pointer`
+  //   } else {
+  //     updateCursorType(ECursorType.pointer)
+  //     if (canvasRef.current) canvasRef.current.style.cursor = `default`
+  //   }
+  // }
 
   // const cursorClassName = useMemo(() => {
   //   switch (cursorType) {
@@ -70,19 +71,14 @@ export default function Content({ canvasHandleRef }: IContentProps) {
   function handleCanvasMouseDown(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) {
-    if (canDragCanvas) {
+    if (canDragCanvas || e.buttons === 2) {
       isDraggingCanvas = true
       dragSrcPos = {
         x: e.clientX,
         y: e.clientY,
       }
       if (canvasRef.current) {
-        canvasRef.current.style.cursor = 'grab'
-        const { left, top } = getComputedStyle(canvasRef.current)
-        dragInitialCanvasPos = {
-          x: parseFloat(left),
-          y: parseFloat(top),
-        }
+        prevCanvasTranslate = { ...canvasTranslate }
       }
     }
   }
@@ -92,14 +88,22 @@ export default function Content({ canvasHandleRef }: IContentProps) {
   ) {
     if (canvasRef.current) {
       if (isDraggingCanvas) {
+        // ----------------------------------
+        // matrix(a, b, c, d, tx, ty)
+        // a：水平缩放幅度
+        // b：x轴倾斜度
+        // c：y轴倾斜度
+        // d：垂直缩放幅度
+        // tx：水平移动距离
+        // ty：垂直移动距离
+        canvasRef.current.style.cursor = 'grab'
         const moveX = e.clientX - dragSrcPos.x
         const moveY = e.clientY - dragSrcPos.y
-        const newPos = {
-          x: dragInitialCanvasPos.x + moveX,
-          y: dragInitialCanvasPos.y + moveY,
+        canvasTranslate = {
+          x: prevCanvasTranslate.x + moveX,
+          y: prevCanvasTranslate.y + moveY,
         }
-        canvasRef.current.style.left = `${newPos.x}px`
-        canvasRef.current.style.top = `${newPos.y}px`
+        canvasRef.current.style.transform = `matrix(${canvasScale}, 0, 0, ${canvasScale}, ${canvasTranslate.x}, ${canvasTranslate.y})`
       } else {
         canvasHandleRef.current &&
           canvasHandleRef.current.updateCursor(cursorType)
@@ -145,17 +149,27 @@ export default function Content({ canvasHandleRef }: IContentProps) {
     function onWheel(e: WheelEvent) {
       e.preventDefault() // 禁用默认的放大缩小，改由自定义
       // 滚轮放大缩小
-      console.log('onWheel', e)
-      if (e.deltaY < 0 && e.ctrlKey) {
-        console.log('上滑 放大')
-        // 缩放比例step为 5%
+      // 按下 ctrl 同时滚动，则缩放
+      if (e.ctrlKey) {
         if (canvasHandleRef.current) {
-          canvasHandleRef.current.scaleUp()
+          if (e.deltaY < 0) {
+            // 缩放比例step为 5%
+            canvasHandleRef.current.scaleUp()
+          } else if (e.deltaY > 0) {
+            canvasHandleRef.current.scaleDown()
+          }
         }
-      } else if (e.deltaY > 0 && e.ctrlKey) {
-        console.log('下滑 缩小')
-        if (canvasHandleRef.current) {
-          canvasHandleRef.current.scaleDown()
+      } else {
+        // 没有按下ctrl，滚动，上下移动
+        if (canvasRef.current) {
+          const top = parseFloat(getComputedStyle(canvasRef.current).top)
+          const gap = 20
+          if (e.deltaY < 0) {
+            // 移动step为50px
+            canvasRef.current.style.top = `${minus(top, gap)}px`
+          } else if (e.deltaY > 0) {
+            canvasRef.current.style.top = `${plus(top, gap)}px`
+          }
         }
       }
     }
@@ -210,21 +224,22 @@ export default function Content({ canvasHandleRef }: IContentProps) {
         if (canvasRef.current) {
           canvasRef.current.style.left = 'calc(50% - 2880px)'
           canvasRef.current.style.top = 'calc(50% - 1570px)'
-          canvasRef.current.style.transform = 'scale(1)'
+          canvasRef.current.style.transform = `matrix(1, 0, 0, 1, 0, 0)`
           canvasScale = 1
+          canvasTranslate = { x: 0, y: 0 }
         }
       },
       scaleUp() {
         if (canvasRef.current) {
           canvasScale = plus(canvasScale, 0.05)
-          canvasRef.current.style.transform = `scale(${canvasScale})`
+          canvasRef.current.style.transform = `matrix(${canvasScale}, 0, 0, ${canvasScale}, ${canvasTranslate.x}, ${canvasTranslate.y})`
           updateCanvasScale(canvasScale)
         }
       },
       scaleDown() {
         if (canvasRef.current && canvasScale > 0.05) {
           canvasScale = minus(canvasScale, 0.05)
-          canvasRef.current.style.transform = `scale(${canvasScale})`
+          canvasRef.current.style.transform = `matrix(${canvasScale}, 0, 0, ${canvasScale}, ${canvasTranslate.x}, ${canvasTranslate.y})`
           updateCanvasScale(canvasScale)
         }
       },
@@ -233,7 +248,9 @@ export default function Content({ canvasHandleRef }: IContentProps) {
   return (
     <div
       className={classnames(styles.wrapper)}
-      onContextMenu={handleWwitchCursorType}>
+      onContextMenu={(e) => {
+        e.preventDefault()
+      }}>
       {/* 画布 */}
       <div
         ref={canvasRef}
