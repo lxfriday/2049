@@ -40,7 +40,6 @@ export default function Content({ canvasHandleRef }: IContentProps) {
     }
   }
 
-
   // const cursorClassName = useMemo(() => {
   //   switch (cursorType) {
   //     case ECursorType.xiexiangfa5: {
@@ -91,16 +90,19 @@ export default function Content({ canvasHandleRef }: IContentProps) {
   function handleCanvasMouseMove(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) {
-    if (isDraggingCanvas) {
-      const moveX = e.clientX - dragSrcPos.x
-      const moveY = e.clientY - dragSrcPos.y
-      const newPos = {
-        x: dragInitialCanvasPos.x + moveX,
-        y: dragInitialCanvasPos.y + moveY,
-      }
-      if (canvasRef.current) {
+    if (canvasRef.current) {
+      if (isDraggingCanvas) {
+        const moveX = e.clientX - dragSrcPos.x
+        const moveY = e.clientY - dragSrcPos.y
+        const newPos = {
+          x: dragInitialCanvasPos.x + moveX,
+          y: dragInitialCanvasPos.y + moveY,
+        }
         canvasRef.current.style.left = `${newPos.x}px`
         canvasRef.current.style.top = `${newPos.y}px`
+      } else {
+        canvasHandleRef.current &&
+          canvasHandleRef.current.updateCursor(cursorType)
       }
     }
   }
