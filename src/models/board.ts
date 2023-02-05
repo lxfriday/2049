@@ -16,10 +16,13 @@ export enum ECursorType {
 
 interface IAppState {
   cursorType: ECursorType
+  // 画布缩放比例
+  canvasScale: number
 }
 
 const initialState: IAppState = {
   cursorType: ECursorType.palm,
+  canvasScale: 1,
 }
 
 export const slice = createSlice({
@@ -32,12 +35,21 @@ export const slice = createSlice({
     ) => {
       state.cursorType = action.payload.type
     },
+    updateCanvasScaleReducer: (
+      state,
+      action: PayloadAction<{ scale: number }>,
+    ) => {
+      state.canvasScale = action.payload.scale
+    },
   },
 })
 
-const { updateCursorTypeReducer } = slice.actions
+const { updateCursorTypeReducer, updateCanvasScaleReducer } = slice.actions
 
 export const updateCursorType = (type: ECursorType) =>
   store.dispatch(updateCursorTypeReducer({ type }))
+
+export const updateCanvasScale = (scale: number) =>
+  store.dispatch(updateCanvasScaleReducer({ scale }))
 
 export default slice.reducer

@@ -1,25 +1,29 @@
 import React, { useEffect, useRef } from 'react'
 import classnames from 'classnames'
 import { useSelector } from 'react-redux'
-import { ECursorType, updateCursorType } from '@models/board'
-import { debounce } from '@utils/index'
+import { plus, minus } from 'number-precision'
+import { ECursorType, updateCursorType, updateCanvasScale } from '@models/board'
 import type { RootState } from '@models/index'
+import type { canvasHandleRefType } from '../../Board'
 import styles from './Content.module.less'
 
 let isDraggingCanvas = false
+// 按下左键时鼠标的位置，按下就会记录
 let dragSrcPos = { x: 0, y: 0 }
+// 按下鼠标时，鼠标的位置，按下就会记录
 let dragInitialCanvasPos = { x: 0, y: 0 }
+// 画布的缩放比例
+let canvasScale = 1
 
 interface IContentProps {
-  canvasHandleRef: React.MutableRefObject<{
-    updateCursor(t: ECursorType): void
-  } | null>
+  canvasHandleRef: canvasHandleRefType
 }
 
 export default function Content({ canvasHandleRef }: IContentProps) {
   const { cursorType } = useSelector((rootState: RootState) => rootState.board)
-  const { current: debouncedDragCanvas } = useRef(debounce(handleDragCanvas, 0))
+  // 画布ref
   const canvasRef = useRef<HTMLDivElement>(null)
+  // 能否拖动画布
   const canDragCanvas = cursorType === ECursorType.palm
 
   // pointer palm 自动切换
@@ -76,25 +80,103 @@ export default function Content({ canvasHandleRef }: IContentProps) {
   //   }
   // }, [cursorType])
 
+  function handleCanvasMouseDown(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) {
+    if (canDragCanvas) {
+      isDraggingCanvas = true
+      dragSrcPos = {
+        x: e.clientX,
+        y: e.clientY,
+      }
+      if (canvasRef.current) {
+        canvasRef.current.style.cursor = 'grab'
+        const { left, top } = getComputedStyle(canvasRef.current)
+        dragInitialCanvasPos = {
+          x: parseFloat(left),
+          y: parseFloat(top),
+        }
+      }
+    }
+  }
+
+  function handleCanvasMouseMove(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) {
+    if (isDraggingCanvas) {
+      const moveX = e.clientX - dragSrcPos.x
+      const moveY = e.clientY - dragSrcPos.y
+      const newPos = {
+        x: dragInitialCanvasPos.x + moveX,
+        y: dragInitialCanvasPos.y + moveY,
+      }
+      if (canvasRef.current) {
+        canvasRef.current.style.left = `${newPos.x}px`
+        canvasRef.current.style.top = `${newPos.y}px`
+      }
+    }
+  }
+
   useEffect(() => {
-    const ctrlCode = 'ControlLeft',
-      shiftCode = 'ShiftLeft'
     function onKeyDown(e: KeyboardEvent) {
-      console.log('onKeyDown', e)
-      if (e.code === ctrlCode) {
-        console.log('lctrl')
-      } else if (e.code === shiftCode) {
-        console.log('lshift')
+      if ((e.code === 'Equal' || e.code === 'NumpadAdd') && e.ctrlKey) {
+        // 放大操作
+        e.preventDefault()
+        if (canvasHandleRef.current) {
+          canvasHandleRef.current.scaleUp()
+        }
+      } else if (
+        (e.code === 'Minus' || e.code === 'NumpadSubtract') &&
+        e.ctrlKey
+      ) {
+        // 缩小操作
+        e.preventDefault()
+        if (canvasHandleRef.current) {
+          canvasHandleRef.current.scaleDown()
+        }
+      } else if ((e.code === 'Digit0' || e.code === 'Numpad0') && e.ctrlKey) {
+        // 重置操作
+        e.preventDefault()
+        if (canvasHandleRef.current) {
+          canvasHandleRef.current.resetScale()
+        }
+        console.log('重置缩放比例', e)
       }
     }
     function onMouseUp(e: MouseEvent) {
+      console.log('onMouseUp')
+      if (canvasRef.current) {
+        if (isDraggingCanvas) canvasRef.current.style.cursor = 'pointer'
+        else canvasRef.current.style.cursor = 'default'
+      }
       isDraggingCanvas = false
     }
-    // window.addEventListener('keydown', onKeyDown)
+
+    function onWheel(e: WheelEvent) {
+      e.preventDefault() // 禁用默认的放大缩小，改由自定义
+      // 滚轮放大缩小
+      console.log('onWheel', e)
+      if (e.deltaY < 0 && e.ctrlKey) {
+        console.log('上滑 放大')
+        // 缩放比例step为 5%
+        if (canvasHandleRef.current) {
+          canvasHandleRef.current.scaleUp()
+        }
+      } else if (e.deltaY > 0 && e.ctrlKey) {
+        console.log('下滑 缩小')
+        if (canvasHandleRef.current) {
+          canvasHandleRef.current.scaleDown()
+        }
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown)
     document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('wheel', onWheel, { passive: false })
     return () => {
-      // window.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('keydown', onKeyDown)
       document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('wheel', onWheel)
     }
   }, [])
   useEffect(() => {
@@ -134,6 +216,28 @@ export default function Content({ canvasHandleRef }: IContentProps) {
           }
         }
       },
+      resetScale() {
+        if (canvasRef.current) {
+          canvasRef.current.style.left = 'calc(50% - 2880px)'
+          canvasRef.current.style.top = 'calc(50% - 1570px)'
+          canvasRef.current.style.transform = 'scale(1)'
+          canvasScale = 1
+        }
+      },
+      scaleUp() {
+        if (canvasRef.current) {
+          canvasScale = plus(canvasScale, 0.05)
+          canvasRef.current.style.transform = `scale(${canvasScale})`
+          updateCanvasScale(canvasScale)
+        }
+      },
+      scaleDown() {
+        if (canvasRef.current && canvasScale > 0.05) {
+          canvasScale = minus(canvasScale, 0.05)
+          canvasRef.current.style.transform = `scale(${canvasScale})`
+          updateCanvasScale(canvasScale)
+        }
+      },
     }
   }, [])
   return (
@@ -143,31 +247,10 @@ export default function Content({ canvasHandleRef }: IContentProps) {
       {/* 画布 */}
       <div
         ref={canvasRef}
-        draggable={canDragCanvas}
         className={styles.canvas}
-        onMouseDown={(e) => {
-          dragSrcPos = {
-            x: e.clientX,
-            y: e.clientY,
-          }
-          if (canvasRef.current) {
-            const { left, top } = canvasRef.current.getBoundingClientRect()
-            dragInitialCanvasPos = {
-              x: left,
-              y: top,
-            }
-          }
-        }}
-        onDragStart={(e) => {
-          isDraggingCanvas = true
-        }}
-        onDrag={debouncedDragCanvas}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          isDraggingCanvas = false
-          console.log('onDrop')
-        }}>
-        c
+        onMouseDown={handleCanvasMouseDown}
+        onMouseMove={handleCanvasMouseMove}>
+        Hello this is word
       </div>
     </div>
   )

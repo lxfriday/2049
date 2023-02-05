@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>title</title>
+    <style>
+      #target {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 400px;
+        height: 400px;
+        background-color: red;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      #ui1 {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 100px;
+        height: 400px;
+        background-color: blue;
+        z-index: 100;
+      }
+
+      #ui2 {
+        position: absolute;
+        top: 50px;
+        left: 550px;
+        width: 100px;
+        height: 400px;
+        background-color: green;
+        z-index: 100;
+      }
+    </style>
+    <script>
+      window.app = {
+        dragging: false,
+        config: {
+          canDrag: false,
+          cursorOffsetX: null,
+          cursorOffsetY: null,
+        },
+        reset: function () {
+          this.config.cursorOffsetX = null
+          this.config.cursorOffsetY = null
+        },
+        start: function () {
+          document.getElementById('target').addEventListener(
+            'mousedown',
+            function (event) {
+              console.log('+++++++++++++ dragstart')
+              this.dragging = true
+              this.config.cursorOffsetX = event.offsetX
+              this.config.cursorOffsetY = event.offsetY
+              this.adjustPostion(event)
+            }.bind(this),
+          )
+          document.getElementById('target').addEventListener(
+            'mousemove',
+            function (event) {
+              if (this.dragging) {
+                console.log('+++++++++++++ drag')
+                event.target.style.cursor = 'move'
+                this.adjustPostion(event)
+              }
+            }.bind(this),
+          )
+          document.getElementById('target').addEventListener(
+            'mouseup',
+            function (event) {
+              console.log('+++++++++++++ dragend')
+              this.dragging = false
+              event.target.style.cursor = 'pointer'
+              this.reset()
+            }.bind(this),
+          )
+        },
+        adjustPostion: function (event) {
+          if (event.clientX <= 0 || event.clientY <= 0) {
+            console.log('skipped')
+            return
+          }
+          var elm = document.getElementById('target')
+          elm.style.left = event.clientX - this.config.cursorOffsetX + 'px'
+          elm.style.top = event.clientY - this.config.cursorOffsetY + 'px'
+          console.log(event.pageX)
+          console.log(event.pageY)
+        },
+      }
+    </script>
+  </head>
+  <body onload="window.app.start();">
+    <div id="ui1"></div>
+    <div id="ui2"></div>
+    <div id="target"></div>
+  </body>
+</html>

@@ -16,19 +16,17 @@ import { ReactComponent as SVGControlsXiexiangfaOpt3 } from '@assets/imgs/contro
 import { ReactComponent as SVGControlsXiexiangfaOpt4 } from '@assets/imgs/controls-xiexiangfa-opt4.svg'
 import { ReactComponent as SVGControlsXiexiangfaOpt5 } from '@assets/imgs/controls-xiexiangfa-opt5.svg'
 import {
-  updateCursorType,
+  updateCursorType as updateCursorTypeToStore,
   ECursorType,
 } from '@models/board'
 import type { RootState } from '@models/index'
 import styles from './ControlBar.module.less'
 
 interface IControlBarProps {
-  canvasHandleRef: React.MutableRefObject<{
-    updateCursor(t: ECursorType): void
-  } | null>
+  updateCursor(t: ECursorType): void
 }
 
-export default function ControlBar({ canvasHandleRef }: IControlBarProps) {
+export default function ControlBar({ updateCursor }: IControlBarProps) {
   const { cursorType } = useSelector((rootState: RootState) => rootState.board)
   const isdefaultActive = cursorType === ECursorType.pointer // 默认的指针
   const isPalmActive = cursorType === ECursorType.palm // 手掌
@@ -40,8 +38,8 @@ export default function ControlBar({ canvasHandleRef }: IControlBarProps) {
     cursorType === ECursorType.xiexiangfa5
 
   function handleChangeCursorType(t: ECursorType) {
-    updateCursorType(t)
-    canvasHandleRef.current?.updateCursor(t)
+    updateCursorTypeToStore(t)
+    updateCursor(t)
   }
 
   function handlePressXiexiangfa() {}
