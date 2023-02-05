@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import classnames from 'classnames'
 import { useSelector } from 'react-redux'
 import { Tooltip } from 'antd'

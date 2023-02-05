@@ -40,18 +40,6 @@ export default function Content({ canvasHandleRef }: IContentProps) {
     }
   }
 
-  function handleDragCanvas(e: React.DragEvent<HTMLDivElement>) {
-    const moveX = e.clientX - dragSrcPos.x
-    const moveY = e.clientY - dragSrcPos.y
-    const newPos = {
-      x: dragInitialCanvasPos.x + moveX,
-      y: dragInitialCanvasPos.y + moveY - 40,
-    }
-    if (canvasRef.current) {
-      canvasRef.current.style.left = `${newPos.x}px`
-      canvasRef.current.style.top = `${newPos.y}px`
-    }
-  }
 
   // const cursorClassName = useMemo(() => {
   //   switch (cursorType) {
@@ -178,7 +166,7 @@ export default function Content({ canvasHandleRef }: IContentProps) {
       document.removeEventListener('mouseup', onMouseUp)
       document.removeEventListener('wheel', onWheel)
     }
-  }, [])
+  }, [canvasHandleRef])
   useEffect(() => {
     canvasHandleRef.current = {
       updateCursor(t: ECursorType) {
@@ -239,7 +227,7 @@ export default function Content({ canvasHandleRef }: IContentProps) {
         }
       },
     }
-  }, [])
+  }, [canvasHandleRef])
   return (
     <div
       className={classnames(styles.wrapper)}

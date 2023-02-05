@@ -1,6 +1,5 @@
 import React from 'react'
-import classnames from 'classnames'
-import { Input, Tooltip, Dropdown } from 'antd'
+import { Tooltip, Dropdown } from 'antd'
 import {
   TeamOutlined,
   DownloadOutlined,
