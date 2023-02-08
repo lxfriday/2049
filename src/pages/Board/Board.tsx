@@ -20,27 +20,19 @@ export default function Board() {
       <Nav />
       <ControlBar
         updateCursor={(t) => {
-          if (canvasHandleRef.current) {
-            canvasHandleRef.current.updateCursor(t)
-          }
+          canvasHandleRef.current?.updateCursor(t)
         }}
       />
       <Content canvasHandleRef={canvasHandleRef} />
       <ZoomTools
         handleScaleUp={() => {
-          if (canvasHandleRef.current) {
-            canvasHandleRef.current.scaleUp()
-          }
+          canvasHandleRef.current?.scaleUp()
         }}
         handleScaleDown={() => {
-          if (canvasHandleRef.current) {
-            canvasHandleRef.current.scaleDown()
-          }
+          canvasHandleRef.current?.scaleDown()
         }}
         handleResetZoom={() => {
-          if (canvasHandleRef.current) {
-            canvasHandleRef.current.resetScale()
-          }
+          canvasHandleRef.current?.resetScale()
         }}
       />
     </div>

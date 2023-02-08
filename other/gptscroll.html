@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #myDiv {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: scale(1);
+        transform-origin: left top;
+        transition: transform 1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="myDiv">This text will be scaled from the left top corner.</div>
+
+    <script>
+      window.onwheel = function () {
+        var scale = 1 + window.pageYOffset / 1000
+        document.getElementById('myDiv').style.transform =
+          'scale(' + scale + ')'
+      }
+    </script>
+  </body>
+</html>

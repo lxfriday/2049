@@ -10,7 +10,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddles) => [
     ...getDefaultMiddles(),
-    createLogger({ diff: true }),
+    // createLogger({ diff: true }),
   ],
 })
 

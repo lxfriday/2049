@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/bignumber.js@9.1.0/bignumber.min.js"></script>
+    <script src="./bignumber.js"></script>
+    <style>
+      body {
+        position: relative;
+        margin: 0;
+        overflow: hidden;
+      }
+      .wrapper {
+        margin-left: calc(50% - 250px);
+        margin-top: 100px;
+        position: relative;
+        width: 500px;
+        height: 500px;
+        background-color: #ccc;
+      }
+      .lineVer,
+      .boxVer {
+        position: absolute;
+        width: 1px;
+        height: 100%;
+        left: 50%;
+        top: 0;
+        background-color: red;
+      }
+      .lineHor,
+      .boxHor {
+        position: absolute;
+        height: 1px;
+        width: 100%;
+        top: 50%;
+        left: 0;
+        background-color: red;
+      }
+      .box {
+        position: absolute;
+        /* left: calc(50% - 50px); */
+        /* top: calc(50% - 50px); */
+        /* width: 100px; */
+        /* height: 100px; */
+        background-color: bisque;
+        /* transform: matrix(6, 0, 0, 6, -350, -400);  */
+        /* transform: matrix(5, 0, 0, 5, -280, -320); */
+        /* transform: matrix(4, 0, 0, 4, -210, -240); */
+        /* transform: matrix(3, 0, 0, 3, -140, -160); */
+        /* transform: matrix(2, 0, 0, 2, -70, -80); */
+        transform-origin: 0 0;
+        transition: transform .5s;
+      }
+      .dot,
+      .boxDot {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 2px;
+        height: 2px;
+        /* 70,80 */
+        /* transform: translate(20px, 30px); */
+        background-color: #000;
+      }
+      .boxDot {
+        background-color: cyan;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="lineVer"></div>
+      <div class="lineHor"></div>
+      <div class="box">
+        <div class="boxVer"></div>
+        <div class="boxHor"></div>
+        <div class="boxDot"></div>
+      </div>
+      <div class="dot"></div>
+    </div>
+    <script>
+      let scale = 1
+      const boxW = 100,
+        boxH = 100,
+        scaleGap = 1
+      let prevTranslate = { x: 0, y: 0 }
+      const boxEle = document.querySelector('.box')
+      const dotEle = document.querySelector('.dot')
+      const boxDotEle = document.querySelector('.boxDot')
+      boxEle.style.left = `calc(50% - ${boxW / 2}px)`
+      boxEle.style.top = `calc(50% - ${boxH / 2}px)`
+      boxEle.style.width = `${boxW}px`
+      boxEle.style.height = `${boxH}px`
+      setTimeout(() => {
+        dotEle.style.transform = `translate(20px, 30px)`
+        boxDotEle.style.transform = `translate(20px, 30px)`
+        boxEle.style.transform = `matrix(4, 0, 0, 4, -210, -240)`
+      }, 1000)
+      setTimeout(() => {
+        boxEle.style.transform = `matrix(5, 0, 0, 5, -280, -80)`
+        dotEle.style.transform = `translate(20px, -30px)`
+        boxDotEle.style.transform = `translate(20px, -30px)`
+      }, 2000)
+      setTimeout(() => {
+        boxEle.style.transform = `matrix(6, 0, 0, 6, -150, -100)`
+        dotEle.style.transform = `translate(-20px, -30px)`
+        boxDotEle.style.transform = `translate(-20px, -30px)`
+      }, 2000)
+      setTimeout(() => {
+        boxEle.style.transform = `matrix(7, 0, 0, 7, -180, -480)`
+        dotEle.style.transform = `translate(-20px, 30px)`
+        boxDotEle.style.transform = `translate(-20px, 30px)`
+      }, 3000)
+      window.addEventListener(
+        'wheel',
+        (e) => {
+          e.preventDefault()
+
+          const cursorPos = {
+            x: e.clientX,
+            y: e.clientY,
+          }
+          const boxEleRect = boxEle.getBoundingClientRect()
+          // origin 在屏幕中位置
+          const originPos = {
+            x: boxEleRect.left,
+            y: boxEleRect.top,
+          }
+          // 鼠标和画布中心的相对坐标，以 scale 为 1 做基准
+          const cursorRelativePos = {
+            x: Math.round((cursorPos.x - originPos.x) / scale),
+            y: Math.round((cursorPos.y - originPos.y) / scale),
+          }
+          console.log(
+            'cursorRelativePos',
+            cursorRelativePos,
+            add(scale, scaleGap),
+          )
+          const scaledRelativePos = { x: 0, y: 0 }
+          if (e.deltaY < 0) {
+            scale = add(scale, scaleGap)
+            const deltaX = cursorRelativePos.x * (scale - 1)
+            const deltaY = cursorRelativePos.y * (scale - 1)
+            prevTranslate.x = -deltaX
+            prevTranslate.y = -deltaY
+            console.log(
+              'delta',
+              { tX: prevTranslate.x, tY: prevTranslate.y },
+              scale,
+            )
+          } else {
+            scale = minus(scale, scaleGap)
+            const deltaX = cursorRelativePos.x * (scale - 1)
+            const deltaY = cursorRelativePos.y * (scale - 1)
+            prevTranslate.x = -deltaX
+            prevTranslate.y = -deltaY
+            console.log(
+              'delta',
+              { tX: prevTranslate.x, tY: prevTranslate.y },
+              scale,
+            )
+          }
+          // let tX = -multiple(minus(scale, 1), 20)
+          // let tY = -multiple(minus(scale, 1), 30)
+          boxEle.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${Math.round(
+            prevTranslate.x,
+          )}, ${Math.round(prevTranslate.y)})`
+        },
+        { passive: false },
+      )
+    </script>
+  </body>
+</html>
